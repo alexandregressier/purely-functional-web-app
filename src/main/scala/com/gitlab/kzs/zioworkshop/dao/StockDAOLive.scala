@@ -5,6 +5,7 @@ import com.gitlab.kzs.zioworkshop.model.{Stock, StockDBAccessError, StockNotFoun
 import doobie.implicits._
 import zio.Task
 import zio.interop.catz._
+import zio.IO
 
 trait StockDAO {
   def currentStock(stockId: Int): Task[Stock]
@@ -18,18 +19,21 @@ trait StockDAO {
   *
   * @param xa
   */
-class StockDAOLive(val xa: IOTransactor) extends StockDAO{
+class StockDAOLive(val xa: IOTransactor) extends StockDAO {
 
   override def currentStock(stockId: Int): Task[Stock] = {
     val stockDatabaseResult = sql"""
       SELECT * FROM stock where id=$stockId
      """.query[Stock].option
 
-    val dbResult = stockDatabaseResult.transact(xa)
-    ???
+    stockDatabaseResult.transact(xa).mapError(StockDBAccessError)
+      .flatMap {
+        case Some(stock) => IO.succeed(stock)
+        case None => IO.fail(StockNotFound)
+      }
   }
 
-  override def updateStock(stockId: Int, increment: Int): Task[Stock] = {    
+  override def updateStock(stockId: Int, increment: Int): Task[Stock] = {
     ???
   }
 }
