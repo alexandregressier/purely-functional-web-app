@@ -25,7 +25,7 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
   val routes: HttpRoutes[Task] = HttpRoutes.of[Task] {
 
     case GET -> Root / "stock" / IntVar(stockId) =>
-      // Retrieve stock in database
+      // for comprehensions are successive flatMaps
       val stockDbResult: Task[Stock] = for {
         stock <- dao.currentStock(stockId)
         rs <- IO.fromEither(Stock.validate(stock))
