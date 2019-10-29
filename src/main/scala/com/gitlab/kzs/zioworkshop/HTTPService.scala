@@ -3,7 +3,7 @@ package com.gitlab.kzs.zioworkshop
 import com.gitlab.kzs.zioworkshop.dao.{StockDAO, StockDAOLive}
 import com.gitlab.kzs.zioworkshop.model.{EmptyStock, Stock, StockNotFound}
 import doobie.util.transactor.Transactor
-import io.circe._
+//import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s._
@@ -36,7 +36,10 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
   }
 
   def stockOrErrorResponse(stockResponse: Task[Stock]): Task[Response[Task]] = {
-    ???
+    stockResponse.foldM({ // map is to fold what flatMap is foldM
+      case StockNotFound => NotFound("Stock not found")
+      case EmptyStock => Conflict("Empty stock")
+    }, stock => Ok(stock.asJson))
   }
 
 }
@@ -45,7 +48,7 @@ object Server extends CatsApp {
 
   import zio.interop.catz.implicits._
 
-  val xa = Transactor.fromDriverManager[Task](
+  val xa = Transactor.fromDriverManager[Task] (
     "org.h2.Driver",
     "jdbc:h2:mem:poc;INIT=RUNSCRIPT FROM 'src/main/resources/sql/create.sql'"
     , "sa", ""
@@ -63,4 +66,5 @@ object Server extends CatsApp {
 
   // Plug the real service
   override def run(args: List[String]) = program.fold(_ => 1, _ => 0)
+
 }
