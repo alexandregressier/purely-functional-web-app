@@ -15,5 +15,8 @@ object Stock {
   /**
     * Checks that stock is not empty.
     */
-  def validate(stock: Stock): Either[StockError, Stock] = ???
+  def validate(stock: Stock): Either[StockError, Stock] =
+    if (stock.value > 0) Right(stock)
+    else Left(EmptyStock)
+
 }
