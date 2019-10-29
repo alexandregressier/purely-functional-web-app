@@ -25,10 +25,11 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
   val routes: HttpRoutes[Task] = HttpRoutes.of[Task] {
 
     case GET -> Root / "stock" / IntVar(stockId) =>
-      stockOrErrorResponse(for {
+      // Retrieve stock in database
+      val stockDbResult: Task[Stock] = for {
         stock <- dao.currentStock(stockId)
-        stockDbResult <- IO.fromEither(Stock.validate(stock))
-      } yield stockDbResult)
+        rs <- IO.fromEither(Stock.validate(stock))
+      } yield rs
 
     case PUT -> Root / "stock" / IntVar(stockId) / IntVar(increment) =>
       stockOrErrorResponse(dao.updateStock(stockId, increment))
