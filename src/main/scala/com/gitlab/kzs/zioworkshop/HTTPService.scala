@@ -39,6 +39,9 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
     stockResponse.foldM({ // map is to fold what flatMap is foldM
       case StockNotFound => NotFound(Json.obj("Error" -> Json.fromString("Stock not found")))
       case EmptyStock => Conflict(Json.obj("Error" -> Json.fromString("Empty stock")))
+      case stockError =>
+        IO(logger.error(stockError.getMessage))
+          .flatMap(_ => InternalServerError(Json.obj("Error" -> Json.fromString(stockError.getMessage))))
     }, stock => Ok(stock.asJson))
   }
 
