@@ -1,8 +1,6 @@
 package com.gitlab.kzs.zioworkshop
 
-import com.gitlab.kzs.zioworkshop.dao.{StockDAO, StockDAOLive}
 import com.gitlab.kzs.zioworkshop.model.{EmptyStock, Stock, StockError, StockNotFound}
-import doobie.util.transactor.Transactor
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -13,20 +11,24 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.syntax.kleisli._
 import org.slf4j.LoggerFactory._
 import zio.interop.catz._
-import zio.{IO, Task, ZIO}
+import zio.{IO, TaskR, ZIO}
 
 /**
   * HTTP route definitions.
   */
-class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
+object HTTPService extends Http4sDsl[STask] {
 
   val logger = getLogger(this.getClass)
 
-  val routes: HttpRoutes[Task] = HttpRoutes.of[Task] {
+  // Dependency injection
+  val stockDao = ZIO.access[ExtServices](_.stockDAO)
+
+  val routes: HttpRoutes[STask] = HttpRoutes.of[STask] {
 
     case GET -> Root / "stock" / IntVar(stockId) =>
       // for comprehensions are successive flatMaps
-      val stockDbResult: Task[Stock] = for {
+      val stockDbResult: ZIO[ExtServices, StockError, Stock] = for {
+        dao <- stockDao
         stock <- dao.currentStock(stockId)
         rs <- IO.fromEither(Stock.validate(stock))
       } yield rs
@@ -34,10 +36,10 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
       stockOrErrorResponse(stockDbResult)
 
     case PUT -> Root / "stock" / IntVar(stockId) / IntVar(increment) =>
-      stockOrErrorResponse(dao.updateStock(stockId, increment))
+      stockOrErrorResponse(stockDao.flatMap(_.updateStock(stockId, increment)))
   }
 
-  def stockOrErrorResponse(stockResponse: IO[StockError, Stock]): Task[Response[Task]] = {
+  def stockOrErrorResponse(stockResponse: ZIO[ExtServices, StockError, Stock]): TaskR[ExtServices, Response[STask]] = {
     stockResponse.foldM({ // map is to fold what flatMap is foldM
       case StockNotFound => NotFound(Json.obj("Error" -> Json.fromString("Stock not found")))
       case EmptyStock => Conflict(Json.obj("Error" -> Json.fromString("Empty stock")))
@@ -51,20 +53,12 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
 
 object Server extends CatsApp {
 
-  import zio.interop.catz.implicits._
-
-  val xa = Transactor.fromDriverManager[Task] (
-    "org.h2.Driver",
-    "jdbc:h2:mem:poc;INIT=RUNSCRIPT FROM 'src/main/resources/sql/create.sql'"
-    , "sa", ""
-  )
-
   // Runtime will execute IO unsafe calls (i.e. all the side effects) and manage threading
-  val program = ZIO.runtime[Environment].flatMap { implicit runtime =>
+  val program = ZIO.runtime[ExtServices].flatMap { implicit runtime =>
     // Start the server
-    BlazeServerBuilder[Task]
+    BlazeServerBuilder[STask]
       .bindHttp(8080, "0.0.0.0")
-      .withHttpApp(new HTTPService(new StockDAOLive(xa)).routes.orNotFound)
+      .withHttpApp(HTTPService.routes.orNotFound)
       .serve
       .compile.drain
   }
