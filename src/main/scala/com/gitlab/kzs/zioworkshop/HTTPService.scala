@@ -30,7 +30,8 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
         stockDbResult <- IO.fromEither(Stock.validate(stock))
       } yield stockDbResult)
 
-      stockOrErrorResponse(stockDbResult)
+    case PUT -> Root / "stock" / IntVar(stockId) / IntVar(increment) =>
+      stockOrErrorResponse(dao.updateStock(stockId, increment))
   }
 
   def stockOrErrorResponse(stockResponse: Task[Stock]): Task[Response[Task]] = {
