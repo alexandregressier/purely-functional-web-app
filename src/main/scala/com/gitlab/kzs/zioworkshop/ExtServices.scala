@@ -19,5 +19,4 @@ object ExtServicesLive extends ExtServices with Clock.Live {
   )
 
   override val stockDAO: StockDAO = new StockDAOLive(xa)
-
 }

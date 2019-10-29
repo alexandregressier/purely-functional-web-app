@@ -12,8 +12,7 @@ trait StockDAO {
   def updateStock(stockId: Int, increment: Int): IO[StockError, Stock]
 }
 
-/**
-  * The methods in this class are pure functions
+/** The methods in this class are pure functions
   * They can describe how to interact with the database (select, insert, ...)
   * But as IO is lazy, no side effect will be executed here
   *

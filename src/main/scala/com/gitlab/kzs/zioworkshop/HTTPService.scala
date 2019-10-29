@@ -13,15 +13,13 @@ import org.slf4j.LoggerFactory._
 import zio.interop.catz._
 import zio.{IO, TaskR, ZIO}
 
-/**
-  * HTTP route definitions.
+/** HTTP route definitions.
   */
 object HTTPService extends Http4sDsl[STask] {
 
   val logger = getLogger(this.getClass)
 
-  // Dependency injection
-  val stockDao = ZIO.access[ExtServices](_.stockDAO)
+  val stockDao = ZIO.access[ExtServices](_.stockDAO) // Dependency injection
 
   val routes: HttpRoutes[STask] = HttpRoutes.of[STask] {
 
@@ -48,7 +46,6 @@ object HTTPService extends Http4sDsl[STask] {
           .flatMap(_ => InternalServerError(Json.obj("Error" -> Json.fromString(stockError.getMessage))))
     }, stock => Ok(stock.asJson))
   }
-
 }
 
 object Server extends CatsApp {
@@ -65,5 +62,4 @@ object Server extends CatsApp {
 
   // Plug the real service
   override def run(args: List[String]) = program.provide(ExtServicesLive).fold(_ => 1, _ => 0)
-
 }
