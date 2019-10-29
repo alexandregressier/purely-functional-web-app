@@ -16,7 +16,7 @@ import zio.interop.catz._
 import zio.{IO, Task, ZIO}
 
 /**
-  * HTTP routes definition
+  * HTTP route definitions.
   */
 class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
 
@@ -25,8 +25,11 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
   val routes: HttpRoutes[Task] = HttpRoutes.of[Task] {
 
     case GET -> Root / "stock" / IntVar(stockId) =>
-      // retrieve stock in database
-      val stockDbResult: Task[Stock] = ???
+      // Retrieve stock in database
+      val stockDbResult: Task[Stock] = for {
+        stock <- dao.currentStock(stockId)
+        rs <- IO.fromEither(Stock.validate(stock))
+      } yield rs
 
       stockOrErrorResponse(stockDbResult)
 
@@ -48,9 +51,9 @@ object Server extends CatsApp {
     , "sa", ""
   )
 
-  //Runtime will execute IO unsafe calls (i.e. all the side effects) and manage threading
+  // Runtime will execute IO unsafe calls (i.e. all the side effects) and manage threading
   val program = ZIO.runtime[Environment].flatMap { implicit runtime =>
-    //Start the server
+    // Start the server
     BlazeServerBuilder[Task]
       .bindHttp(8080, "0.0.0.0")
       .withHttpApp(new HTTPService(new StockDAOLive(xa)).routes.orNotFound)
@@ -58,8 +61,6 @@ object Server extends CatsApp {
       .compile.drain
   }
 
-  //plug the real service
+  // Plug the real service
   override def run(args: List[String]) = program.fold(_ => 1, _ => 0)
 }
-
-
