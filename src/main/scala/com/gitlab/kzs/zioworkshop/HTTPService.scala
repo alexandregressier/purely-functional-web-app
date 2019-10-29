@@ -1,7 +1,7 @@
 package com.gitlab.kzs.zioworkshop
 
 import com.gitlab.kzs.zioworkshop.dao.{StockDAO, StockDAOLive}
-import com.gitlab.kzs.zioworkshop.model.{EmptyStock, Stock, StockNotFound}
+import com.gitlab.kzs.zioworkshop.model.{EmptyStock, Stock, StockError, StockNotFound}
 import doobie.util.transactor.Transactor
 import io.circe._
 import io.circe.generic.auto._
@@ -34,7 +34,7 @@ class HTTPService(dao: StockDAO) extends Http4sDsl[Task] {
       stockOrErrorResponse(dao.updateStock(stockId, increment))
   }
 
-  def stockOrErrorResponse(stockResponse: Task[Stock]): Task[Response[Task]] = {
+  def stockOrErrorResponse(stockResponse: IO[StockError, Stock]): Task[Response[Task]] = {
     stockResponse.foldM({ // map is to fold what flatMap is foldM
       case StockNotFound => NotFound(Json.obj("Error" -> Json.fromString("Stock not found")))
       case EmptyStock => Conflict(Json.obj("Error" -> Json.fromString("Empty stock")))
