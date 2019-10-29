@@ -12,7 +12,7 @@ class StockSpec extends Specification {
 
   val fakeStockDAO: StockDAO = new StockDAO {
 
-    //you could also use a mocking framework here
+    // You could also use a mocking framework here
     override def currentStock(stockId: Int): Task[Stock] = {
       stockId match {
         case 1 => IO.succeed(Stock(1, 10))
@@ -24,8 +24,8 @@ class StockSpec extends Specification {
     }
 
     override def updateStock(stockId: Int, updateValue: Int): Task[Stock] = ???
+
   }
-  
 
   val testRuntime = new DefaultRuntime {}
 
@@ -34,26 +34,30 @@ class StockSpec extends Specification {
       val request = Request[Task](Method.GET, uri"""/stock/1""")
       val stockResponse = testRuntime.unsafeRun(new HTTPService(fakeStockDAO).routes.orNotFound.run(request))
       stockResponse.status must beEqualTo(Status.Ok)
-      testRuntime.unsafeRun(stockResponse.as[String]) must beEqualTo(???)
+      testRuntime.unsafeRun(stockResponse.as[String]) must beEqualTo("""{"id":1,"value":"10"}""")
     }
 
-    "return 200 and updated stock" in {
-      ???
-    }
+//    "return 200 and updated stock" in {
+//      ???
+//    }
   
-    "return empty stock error" in {
-      ???
-    }
+//    "return empty stock error" in {
+//      val request = Request[Task](Method.GET, uri"""/stock/3""")
+//      val stockResponse = testRuntime.unsafeRun(new HTTPService(fakeStockDAO).routes.orNotFound.run(request))
+//      stockResponse.status must beEqualTo(Status.Ok)
+//    }
 
-    "return stock not found error" in {
-      ???
-    }
+//    "return stock not found error" in {
+//      val request = Request[Task](Method.GET, uri"""/stock/4""")
+//      val stockResponse = testRuntime.unsafeRun(new HTTPService(fakeStockDAO).routes.orNotFound.run(request))
+//      stockResponse.status must beEqualTo(Status.Ok)
+//    }
 
-    "return internal server error" in {
-      val request = ???
-      val stockResponse = ???
-      stockResponse.status must beEqualTo(Status.InternalServerError)
-      testRuntime.unsafeRun(stockResponse.as[String]) must contain(???)
-    }
+//    "return internal server error" in {
+//      val request = ???
+//      val stockResponse = ???
+//      stockResponse.status must beEqualTo(Status.InternalServerError)
+//      testRuntime.unsafeRun(stockResponse.as[String]) must contain(???)
+//    }
   }
 }
