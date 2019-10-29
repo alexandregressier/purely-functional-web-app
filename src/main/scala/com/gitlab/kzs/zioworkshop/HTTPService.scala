@@ -64,6 +64,6 @@ object Server extends CatsApp {
   }
 
   // Plug the real service
-  override def run(args: List[String]) = program.fold(_ => 1, _ => 0)
+  override def run(args: List[String]) = program.provide(ExtServicesLive).fold(_ => 1, _ => 0)
 
 }
