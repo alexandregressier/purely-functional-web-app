@@ -27,13 +27,18 @@ class StockDAOLive(val xa: IOTransactor) extends StockDAO {
      """.query[Stock].option
 
     stockDatabaseResult.transact(xa).mapError(StockDBAccessError)
-      .flatMap {
+      .flatMap { // Task[Option[Stock]] -> Task[Stock]
         case Some(stock) => IO.succeed(stock)
         case None => IO.fail(StockNotFound)
       }
   }
 
   override def updateStock(stockId: Int, increment: Int): Task[Stock] = {
-    ???
+    val newStockDatabaseResult = for {
+      _ <- sql"""UPDATE stock SET value = value + $increment WHERE id=$stockId""".update.run
+      newStock <- sql"""SELECT * FROM stock where id=$stockId""".query[Stock].unique
+    } yield newStock
+
+    newStockDatabaseResult.transact(xa).mapError(StockDBAccessError)
   }
 }
