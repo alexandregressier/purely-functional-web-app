@@ -8,8 +8,8 @@ import zio.interop.catz._
 import zio.IO
 
 trait StockDAO {
-  def currentStock(stockId: Int): Task[Stock]
-  def updateStock(stockId: Int, increment: Int): Task[Stock]
+  def currentStock(stockId: Int): IO[StockError, Stock]
+  def updateStock(stockId: Int, increment: Int): IO[StockError, Stock]
 }
 
 /**
