@@ -7,7 +7,7 @@ case object EmptyStock extends StockError(new Exception)
 case object StockNotFound extends StockError(new Exception)
 case class StockDBAccessError(cause: Throwable) extends StockError(cause)
 
-/** Stock business logic
+/** Stock business logic.
   */
 object Stock {
 

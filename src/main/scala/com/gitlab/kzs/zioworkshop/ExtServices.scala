@@ -6,10 +6,14 @@ import zio.Task
 import zio.clock.Clock
 import zio.interop.catz._
 
+/** External services.
+  */
 trait ExtServices extends Clock {
   val stockDAO: StockDAO
 }
 
+/** The external services live implementation.
+  */
 object ExtServicesLive extends ExtServices with Clock.Live {
 
   val xa = Transactor.fromDriverManager[Task] (

@@ -3,20 +3,22 @@ package com.gitlab.kzs.zioworkshop.dao
 import com.gitlab.kzs.zioworkshop.IOTransactor
 import com.gitlab.kzs.zioworkshop.model.{Stock, StockDBAccessError, StockError, StockNotFound}
 import doobie.implicits._
-import zio.Task
-import zio.interop.catz._
 import zio.IO
+import zio.interop.catz._
 
+/** Stock DAO.
+  */
 trait StockDAO {
   def currentStock(stockId: Int): IO[StockError, Stock]
   def updateStock(stockId: Int, increment: Int): IO[StockError, Stock]
 }
 
-/** The methods in this class are pure functions
-  * They can describe how to interact with the database (select, insert, ...)
-  * But as IO is lazy, no side effect will be executed here
+/** Stock DAO live implementation.
   *
-  * @param xa
+  * The methods of this class are pure functions. They may describe how to interact with the database using the SQL DML,
+  * but since IO is lazy, no side effect will be executed here.
+  *
+  * @param xa the transactor used to connect to the database.
   */
 class StockDAOLive(val xa: IOTransactor) extends StockDAO {
 
