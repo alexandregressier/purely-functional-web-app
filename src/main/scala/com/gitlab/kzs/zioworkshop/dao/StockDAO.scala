@@ -9,7 +9,7 @@ import zio.interop.catz._
 /** Stock DAO.
   */
 trait StockDAO {
-  def currentStock(stockId: Int): IO[StockError, Stock]
+  def findStock(stockId: Int): IO[StockError, Stock]
   def updateStock(stockId: Int, increment: Int): IO[StockError, Stock]
 }
 
@@ -22,7 +22,7 @@ trait StockDAO {
   */
 class StockDAOLive(val xa: IOTransactor) extends StockDAO {
 
-  override def currentStock(stockId: Int): IO[StockError, Stock] = {
+  override def findStock(stockId: Int): IO[StockError, Stock] = {
     val stockDatabaseResult = sql"""
       SELECT * FROM stock where id=$stockId
      """.query[Stock].option

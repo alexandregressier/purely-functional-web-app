@@ -27,7 +27,7 @@ object HTTPService extends Http4sDsl[STask] {
       // for comprehensions are successive flatMaps
       val stockDbResult: ZIO[ExtServices, StockError, Stock] = for {
         dao <- stockDao
-        stock <- dao.currentStock(stockId)
+        stock <- dao.findStock(stockId)
         rs <- IO.fromEither(Stock.validate(stock))
       } yield rs
 
