@@ -11,6 +11,7 @@ import fs2.Stream
   */
 trait StockDAO {
   def findStock(stockId: Int): IO[StockError, Stock]
+  def findAllStocks: Stream[Task, Stock]
   def updateStock(stockId: Int, increment: Int): IO[StockError, Stock]
 }
 
@@ -33,6 +34,14 @@ class StockDAOLive(val xa: IOTransactor) extends StockDAO {
         case Some(stock) => IO.succeed(stock)
         case None => IO.fail(StockNotFound)
       }
+  }
+
+  override def findAllStocks: Stream[Task, Stock] = {
+    val stocksDatabaseResult = sql"""
+      SELECT * FROM stock;
+     """.query[Stock].stream
+
+    stocksDatabaseResult.transact(xa)
   }
 
   override def updateStock(stockId: Int, increment: Int): IO[StockError, Stock] = {
