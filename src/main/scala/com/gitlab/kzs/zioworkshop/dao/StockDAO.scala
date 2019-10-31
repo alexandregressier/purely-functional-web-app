@@ -3,8 +3,9 @@ package com.gitlab.kzs.zioworkshop.dao
 import com.gitlab.kzs.zioworkshop.IOTransactor
 import com.gitlab.kzs.zioworkshop.model.{Stock, StockDBAccessError, StockError, StockNotFound}
 import doobie.implicits._
-import zio.IO
+import zio.{IO, Task}
 import zio.interop.catz._
+import fs2.Stream
 
 /** Stock DAO.
   */
@@ -24,7 +25,7 @@ class StockDAOLive(val xa: IOTransactor) extends StockDAO {
 
   override def findStock(stockId: Int): IO[StockError, Stock] = {
     val stockDatabaseResult = sql"""
-      SELECT * FROM stock where id=$stockId
+      SELECT * FROM stock where id=$stockId;
      """.query[Stock].option
 
     stockDatabaseResult.transact(xa).mapError(StockDBAccessError)
@@ -36,8 +37,8 @@ class StockDAOLive(val xa: IOTransactor) extends StockDAO {
 
   override def updateStock(stockId: Int, increment: Int): IO[StockError, Stock] = {
     val newStockDatabaseResult = for {
-      _ <- sql"""UPDATE stock SET value = value + $increment WHERE id=$stockId""".update.run
-      newStock <- sql"""SELECT * FROM stock where id=$stockId""".query[Stock].unique
+      _ <- sql"""UPDATE stock SET value = value + $increment WHERE id=$stockId;""".update.run
+      newStock <- sql"""SELECT * FROM stock where id=$stockId;""".query[Stock].unique
     } yield newStock
 
     newStockDatabaseResult.transact(xa).mapError(StockDBAccessError)
