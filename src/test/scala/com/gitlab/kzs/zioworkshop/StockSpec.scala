@@ -13,8 +13,8 @@ import zio.{IO, Runtime, Task}
 class StockSpec extends Specification {
 
   object ExtServicesTest extends ExtServices with Clock.Live {
-    override val stockDAO: StockDAO = new StockDAO {
 
+    override val stockDAO: StockDAO = new StockDAO {
       override def currentStock(stockId: Int): IO[StockError, Stock] =
       // You could also use a mocking framework here
         stockId match {
