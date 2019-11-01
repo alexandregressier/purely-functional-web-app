@@ -24,7 +24,7 @@ object HTTPService extends Http4sDsl[STask] {
 
   val routes: HttpRoutes[STask] = HttpRoutes.of[STask] {
 
-    case GET -> Root / "stock" / IntVar(stockId) =>
+    case GET -> Root / "stocks" / IntVar(stockId) =>
       // `for` comprehensions are successive flatMaps
       val stockDbResult: ZIO[ExtServices, StockError, Stock] = for {
         dao <- stockDAO
@@ -34,7 +34,7 @@ object HTTPService extends Http4sDsl[STask] {
 
       stockOrErrorResponse(stockDbResult)
 
-    case PUT -> Root / "stock" / IntVar(stockId) / IntVar(increment) =>
+    case PUT -> Root / "stocks" / IntVar(stockId) / IntVar(increment) =>
       stockOrErrorResponse(stockDAO.flatMap(_.updateStock(stockId, increment)))
 
     case GET -> Root / "stocks" =>
