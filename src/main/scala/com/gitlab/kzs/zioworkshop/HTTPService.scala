@@ -19,7 +19,8 @@ object HTTPService extends Http4sDsl[STask] {
 
   val logger = getLogger(this.getClass)
 
-  val stockDAO = ZIO.access[ExtServices](_.stockDAO) // Dependency injection
+  val stockDAO = ZIO.access[ExtServices](_.stockDAO) // Dependency injections
+  val fileStream = ZIO.access[ExtServices](_.fileStream)
 
   val routes: HttpRoutes[STask] = HttpRoutes.of[STask] {
 

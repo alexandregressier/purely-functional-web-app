@@ -1,5 +1,6 @@
 package com.gitlab.kzs.zioworkshop.stream
 
+import java.net.URI
 import java.nio.file.Paths
 
 import cats.effect.Resource
@@ -21,7 +22,7 @@ trait FileStream {
   *
   * Content could have been streamed for an external web service as well.
   */
-class FileStreamLive(path: String,
+class FileStreamLive(path: URI,
                      blockingExecContext: Resource[Task, ExecutionContextExecutorService]) extends FileStream {
 
   override def salesFromFile: Stream[STask, Stock] = {
