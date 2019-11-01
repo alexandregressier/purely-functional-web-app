@@ -34,7 +34,7 @@ object ExtServicesLive extends ExtServices with Clock.Live {
     }
   override val stockDAO: StockDAO = new StockDAOLive(xa)
   override val fileStream: FileStream = new FileStreamLive(
-    getClass.getResource("specialCollection.txt").toURI,
+    getClass.getResource("/specialCollection.txt").toURI,
     blockingExecContext
   )
 }
