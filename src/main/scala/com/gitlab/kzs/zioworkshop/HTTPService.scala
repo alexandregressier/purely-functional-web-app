@@ -19,14 +19,14 @@ object HTTPService extends Http4sDsl[STask] {
 
   val logger = getLogger(this.getClass)
 
-  val stockDao = ZIO.access[ExtServices](_.stockDAO) // Dependency injection
+  val stockDAO = ZIO.access[ExtServices](_.stockDAO) // Dependency injection
 
   val routes: HttpRoutes[STask] = HttpRoutes.of[STask] {
 
     case GET -> Root / "stock" / IntVar(stockId) =>
-      // for comprehensions are successive flatMaps
+      // `for` comprehensions are successive flatMaps
       val stockDbResult: ZIO[ExtServices, StockError, Stock] = for {
-        dao <- stockDao
+        dao <- stockDAO
         stock <- dao.findStock(stockId)
         rs <- IO.fromEither(Stock.validate(stock))
       } yield rs
@@ -34,7 +34,7 @@ object HTTPService extends Http4sDsl[STask] {
       stockOrErrorResponse(stockDbResult)
 
     case PUT -> Root / "stock" / IntVar(stockId) / IntVar(increment) =>
-      stockOrErrorResponse(stockDao.flatMap(_.updateStock(stockId, increment)))
+      stockOrErrorResponse(stockDAO.flatMap(_.updateStock(stockId, increment)))
   }
 
   def stockOrErrorResponse(stockResponse: ZIO[ExtServices, StockError, Stock]): TaskR[ExtServices, Response[STask]] = {
