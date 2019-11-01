@@ -36,6 +36,18 @@ object HTTPService extends Http4sDsl[STask] {
 
     case PUT -> Root / "stock" / IntVar(stockId) / IntVar(increment) =>
       stockOrErrorResponse(stockDAO.flatMap(_.updateStock(stockId, increment)))
+
+    case GET -> Root / "stocks" =>
+      val mergedStockStream = for {
+        dao <- stockDAO
+        stream <- fileStream
+      } yield dao.findAllStocks.merge(stream.salesFromFile)
+
+      mergedStockStream.flatMap(merged =>
+        Ok(merged
+          .map(_.asJson.noSpaces)
+          .map(json => s""""data": $json""")
+          .intersperse("\n" * 2)))
   }
 
   def stockOrErrorResponse(stockResponse: ZIO[ExtServices, StockError, Stock]): TaskR[ExtServices, Response[STask]] = {
