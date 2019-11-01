@@ -41,7 +41,7 @@ object HTTPService extends Http4sDsl[STask] {
   def stockOrErrorResponse(stockResponse: ZIO[ExtServices, StockError, Stock]): TaskR[ExtServices, Response[STask]] = {
     stockResponse.foldM({ // map is to fold what flatMap is foldM
       case StockNotFound => NotFound(Json.obj("Error" -> Json.fromString("Stock not found")))
-      case EmptyStock => Conflict(Json.obj("Error" -> Json.fromString("Empty stock")))
+      case EmptyStock => Conflict(Json.obj("Error" -> Json.fromString("Stock is empty")))
       case stockError =>
         IO(logger.error(stockError.getMessage))
           .flatMap(_ => InternalServerError(Json.obj("Error" -> Json.fromString(stockError.getMessage))))
