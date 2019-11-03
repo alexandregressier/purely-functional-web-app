@@ -1,11 +1,10 @@
-package com.gitlab.kzs.zioworkshop.stream
+package com.thisisscala.purelyfunctionalwebapp.stream
 
-import java.net.{URI, URL}
 import java.nio.file.Paths
 
 import cats.effect.Resource
-import com.gitlab.kzs.zioworkshop.STask
-import com.gitlab.kzs.zioworkshop.model.Stock
+import com.thisisscala.purelyfunctionalwebapp.STask
+import com.thisisscala.purelyfunctionalwebapp.model.Stock
 import fs2.{Stream, io, text}
 import zio.Task
 import zio.interop.catz._

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/zioWorkshop.iml" filepath="$PROJECT_DIR$/.idea/modules/zioWorkshop.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/zioWorkshop-build.iml" filepath="$PROJECT_DIR$/.idea/modules/zioWorkshop-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/purely-functional-web-app.iml" filepath="$PROJECT_DIR$/.idea/modules/purely-functional-web-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/purely-functional-web-app-build.iml" filepath="$PROJECT_DIR$/.idea/modules/purely-functional-web-app-build.iml" />
     </modules>
   </component>
 </project>

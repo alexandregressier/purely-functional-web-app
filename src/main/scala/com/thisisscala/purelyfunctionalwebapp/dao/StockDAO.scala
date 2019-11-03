@@ -1,11 +1,11 @@
-package com.gitlab.kzs.zioworkshop.dao
+package com.thisisscala.purelyfunctionalwebapp.dao
 
-import com.gitlab.kzs.zioworkshop.IOTransactor
-import com.gitlab.kzs.zioworkshop.model.{Stock, StockDBAccessError, StockError, StockNotFound}
+import com.thisisscala.purelyfunctionalwebapp.IOTransactor
+import com.thisisscala.purelyfunctionalwebapp.model.{Stock, StockDBAccessError, StockError, StockNotFound}
 import doobie.implicits._
-import zio.{IO, Task}
-import zio.interop.catz._
 import fs2.Stream
+import zio.interop.catz._
+import zio.{IO, Task}
 
 /** Stock DAO.
   */

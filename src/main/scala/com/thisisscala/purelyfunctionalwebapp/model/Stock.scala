@@ -1,4 +1,4 @@
-package com.gitlab.kzs.zioworkshop.model
+package com.thisisscala.purelyfunctionalwebapp.model
 
 case class Stock(id: Int, value: Int)
 

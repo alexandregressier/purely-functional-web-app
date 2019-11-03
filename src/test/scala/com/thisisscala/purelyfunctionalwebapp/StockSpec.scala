@@ -1,8 +1,8 @@
-package com.gitlab.kzs.zioworkshop
+package com.thisisscala.purelyfunctionalwebapp
 
-import com.gitlab.kzs.zioworkshop.dao.StockDAO
-import com.gitlab.kzs.zioworkshop.model.{Stock, StockDBAccessError, StockError, StockNotFound}
-import com.gitlab.kzs.zioworkshop.stream.FileStream
+import com.thisisscala.purelyfunctionalwebapp.dao.StockDAO
+import com.thisisscala.purelyfunctionalwebapp.model.{Stock, StockDBAccessError, StockError, StockNotFound}
+import com.thisisscala.purelyfunctionalwebapp.stream.FileStream
 import org.http4s._
 import org.http4s.syntax.kleisli._
 import org.specs2.mutable.Specification

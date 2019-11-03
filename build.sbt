@@ -7,9 +7,9 @@ val ZioVersion = "1.0.0-RC9-4"
 
 lazy val root = (project in file("."))
   .settings(
-    organization := "com.gitlab.kzs",
-    name := "zioWorkshop",
-    version := "0.0.1-SNAPSHOT",
+    organization := "com.thisisscala",
+    name := "purely-functional-web-app",
+    version := "0.1.0-SNAPSHOT",
     scalaVersion := "2.12.4",
     libraryDependencies ++= Seq(
       "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
@@ -72,4 +72,3 @@ scalacOptions ++= Seq(
 //  "-Ywarn-unused:privates", // Warn if a private member is unused.
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
-

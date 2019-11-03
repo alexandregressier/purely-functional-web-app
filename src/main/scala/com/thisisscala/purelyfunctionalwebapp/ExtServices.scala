@@ -1,10 +1,10 @@
-package com.gitlab.kzs.zioworkshop
+package com.thisisscala.purelyfunctionalwebapp
 
 import java.util.concurrent.Executors
 
 import cats.effect.Resource
-import com.gitlab.kzs.zioworkshop.dao.{StockDAO, StockDAOLive}
-import com.gitlab.kzs.zioworkshop.stream.{FileStream, FileStreamLive}
+import com.thisisscala.purelyfunctionalwebapp.dao.{StockDAO, StockDAOLive}
+import com.thisisscala.purelyfunctionalwebapp.stream.{FileStream, FileStreamLive}
 import doobie.util.transactor.Transactor
 import zio.Task
 import zio.clock.Clock

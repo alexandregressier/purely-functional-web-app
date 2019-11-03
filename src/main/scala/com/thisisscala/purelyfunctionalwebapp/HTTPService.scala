@@ -1,6 +1,6 @@
-package com.gitlab.kzs.zioworkshop
+package com.thisisscala.purelyfunctionalwebapp
 
-import com.gitlab.kzs.zioworkshop.model.{EmptyStock, Stock, StockError, StockNotFound}
+import com.thisisscala.purelyfunctionalwebapp.model.{EmptyStock, Stock, StockError, StockNotFound}
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
