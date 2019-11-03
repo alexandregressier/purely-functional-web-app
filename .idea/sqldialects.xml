@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/src/main/resources/sql/create.sql" dialect="H2" />
+    <file url="file://$PROJECT_DIR$/src/main/scala/com/gitlab/kzs/zioworkshop/dao/StockDAO.scala" dialect="GenericSQL" />
+    <file url="PROJECT" dialect="H2" />
+  </component>
+</project>
